@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UnaDesk — цифровые инструменты для строительства</title>
+<meta name="description" content="UnaDesk — один стол на весь проект. Чертежи, исполнительная документация и решения в одной актуальной версии для всех участников объекта. Скоро запуск.">
+<meta name="theme-color" content="#0B0D10">
+<meta property="og:title" content="UnaDesk — один стол на весь проект">
+<meta property="og:description" content="Цифровые инструменты для строительства. Скоро запуск.">
+<meta property="og:url" content="https://unadesk.ru/">
+<link rel="alternate" hreflang="ru" href="https://unadesk.ru/">
+<link rel="alternate" hreflang="en" href="https://unadesk.com/">
+<link rel="alternate" hreflang="x-default" href="https://unadesk.com/">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+  /* Fonts are self-hosted: the page makes no requests to third-party services */
+  @font-face{font-family:'Unbounded';font-style:normal;font-display:swap;font-weight:300;src:url(fonts/unbounded-cyrillic-300-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Unbounded';font-style:normal;font-display:swap;font-weight:300;src:url(fonts/unbounded-latin-300-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:'Unbounded';font-style:normal;font-display:swap;font-weight:600;src:url(fonts/unbounded-cyrillic-600-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Unbounded';font-style:normal;font-display:swap;font-weight:600;src:url(fonts/unbounded-latin-600-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:400;src:url(fonts/manrope-cyrillic-400-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:400;src:url(fonts/manrope-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:600;src:url(fonts/manrope-cyrillic-600-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:600;src:url(fonts/manrope-latin-600-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:700;src:url(fonts/manrope-cyrillic-700-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:700;src:url(fonts/manrope-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:400;src:url(fonts/jetbrains-mono-cyrillic-400-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:400;src:url(fonts/jetbrains-mono-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:500;src:url(fonts/jetbrains-mono-cyrillic-500-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:500;src:url(fonts/jetbrains-mono-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  :root {
+    --bg: #0B0D10;
+    --surface: #15181D;
+    --line: #2A2F37;
+    --line-strong: #3A414B;
+    --text: #EDEFEA;
+    --muted: #8A919C;
+    --accent: #2EE59D;
+    --on-accent: #0B0D10;
+    --font-display: Unbounded, "Arial Black", sans-serif;
+    --font-sans: Manrope, "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100%;
+    background-color: var(--bg);
+    background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  .frame {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: minmax(0, 1fr);
+    padding: max(24px, env(safe-area-inset-top)) clamp(20px, 5vw, 72px) max(24px, env(safe-area-inset-bottom));
+  }
+  .corner { position: absolute; width: 20px; height: 20px; border-color: var(--line-strong); border-style: solid; border-width: 0; pointer-events: none; }
+  .corner.tl { left: 12px; top: 12px; border-left-width: 1.5px; border-top-width: 1.5px; }
+  .corner.tr { right: 12px; top: 12px; border-right-width: 1.5px; border-top-width: 1.5px; }
+  .corner.bl { left: 12px; bottom: 12px; border-left-width: 1.5px; border-bottom-width: 1.5px; }
+  .corner.br { right: 12px; bottom: 12px; border-right-width: 1.5px; border-bottom-width: 1.5px; }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; position: relative; z-index: 2; }
+  .logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+  .logo svg { width: 36px; height: 36px; display: block; }
+  .word { font-family: var(--font-display); font-size: 24px; line-height: 1; letter-spacing: -0.02em; }
+  .word b { font-weight: 600; } .word span { font-weight: 300; }
+  .lang { display: flex; gap: 4px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; }
+  .lang button { font: inherit; color: var(--muted); background: transparent; border: 0; padding: 10px 10px; border-radius: 6px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--surface); color: var(--text); }
+
+  main { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 28px; padding-block: 48px 24px; min-width: 0; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; color: var(--accent); text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 2.4s ease-in-out infinite; }
+  h1 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(34px, 5.4vw, 76px); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
+  .slogan { margin: -8px 0 0; max-width: 640px; font-family: var(--font-display); font-weight: 300; font-size: clamp(18px, 2vw, 24px); line-height: 1.35; letter-spacing: -0.01em; color: var(--text); padding-left: 16px; border-left: 2px solid var(--accent); }
+  .lead { margin: 0; max-width: 600px; font-size: clamp(17px, 2vw, 20px); line-height: 1.55; color: var(--muted); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px; border-radius: 6px; font-weight: 700; font-size: 15px; text-decoration: none; transition: filter .15s, background-color .15s, border-color .15s; }
+  .btn.primary { background: var(--accent); color: var(--on-accent); }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.ghost { border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); font-weight: 600; }
+  .btn.ghost:hover { border-color: var(--muted); }
+  .btn svg { width: 18px; height: 18px; }
+
+
+  /* Hero layout */
+  .stage { position: relative; z-index: 2; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px 48px; align-items: center; }
+  @media (min-width: 1080px) { .hero { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); } }
+  .visual { margin: 0; width: 100%; max-width: 460px; justify-self: center; }
+  .doc { display: block; width: 100%; height: auto; overflow: visible; }
+
+  /* Drawing — final state is the resting state (reduced motion shows it) */
+  .doc text { font-family: var(--font-mono); fill: var(--muted); font-size: 11px; letter-spacing: .06em; }
+  .doc .crumb { font-size: 12px; }
+  .doc .sheet { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2; }
+  .doc .inner { fill: none; stroke: var(--line); stroke-width: 1; }
+  .doc .back rect { fill: #111418; stroke: var(--line); stroke-width: 1; }
+  .doc .back text { font-size: 10px; }
+  .doc .axes .ax { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 6 4; }
+  .doc .axes circle { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1; }
+  .doc .axes text { text-anchor: middle; font-size: 10px; }
+  .doc .p { fill: none; stroke: var(--text); stroke-width: 1.4; stroke-dasharray: 260; stroke-dashoffset: 0; }
+  .doc .dim line { stroke: var(--muted); stroke-width: 1; }
+  .doc .dim text { text-anchor: middle; font-size: 10px; }
+  .doc .tb rect, .doc .tb line { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+  .doc .tb .code { fill: var(--text); font-size: 12px; }
+  .doc .tb .small { font-size: 10px; }
+  .doc .rev { fill: var(--accent); font-size: 16px; font-weight: 500; }
+  .doc .r1, .doc .r2 { opacity: 0; }
+  .doc .stamp rect { fill: rgba(46,229,157,.12); stroke: var(--accent); stroke-width: 1.5; }
+  .doc .stamp path { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linecap: square; }
+  .doc .stamp text { fill: var(--accent); font-size: 13px; font-weight: 500; letter-spacing: .1em; }
+  .doc .stamp { transform-box: fill-box; transform-origin: center; }
+  .doc .flow .track { stroke: var(--line); stroke-width: 2; }
+  .doc .flow .prog { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 320; stroke-dashoffset: 0; }
+  .doc .flow .d { fill: var(--accent); stroke: var(--bg); stroke-width: 3; }
+  .doc .flow .lbl { text-anchor: middle; font-size: 10px; }
+  .doc .caption { fill: var(--accent); font-size: 11px; letter-spacing: .12em; }
+
+  /* 12 s loop: draft → revisions filed behind → review → approved */
+  .doc .loop { animation: loop 12s linear infinite; }
+  .doc .p { animation: draft 12s cubic-bezier(.4,0,.2,1) infinite; }
+  .doc .p2 { animation-delay: .12s; } .doc .p3 { animation-delay: .24s; } .doc .p4 { animation-delay: .36s; }
+  .doc .p5 { animation-delay: .48s; } .doc .p6 { animation-delay: .6s; } .doc .p7 { animation-delay: .72s; }
+  .doc .p8 { animation-delay: .84s; } .doc .p9 { animation-delay: .96s; }
+  .doc .dim { animation: fadeDim 12s ease infinite; }
+  .doc .r1 { animation: rev1 12s steps(1) infinite; }
+  .doc .r2 { animation: rev2 12s steps(1) infinite; }
+  .doc .r3 { animation: rev3 12s steps(1) infinite; }
+  .doc .back1 { animation: file1 12s cubic-bezier(.2,.7,.2,1) infinite; }
+  .doc .back2 { animation: file2 12s cubic-bezier(.2,.7,.2,1) infinite; }
+  .doc .stamp { animation: stamp 12s cubic-bezier(.3,1.6,.5,1) infinite; }
+  .doc .flow .prog { animation: prog 12s ease infinite; }
+  .doc .d2 { animation: dot2 12s steps(1) infinite; }
+  .doc .d3 { animation: dot3 12s steps(1) infinite; }
+
+  @keyframes loop { 0% { opacity: 0; } 3% { opacity: 1; } 91% { opacity: 1; } 97%, 100% { opacity: 0; } }
+  @keyframes draft { 0%, 2% { stroke-dashoffset: 260; } 18%, 100% { stroke-dashoffset: 0; } }
+  @keyframes fadeDim { 0%, 19% { opacity: 0; } 24%, 100% { opacity: 1; } }
+  @keyframes rev1 { 0% { opacity: 1; } 34% { opacity: 0; } 100% { opacity: 0; } }
+  @keyframes rev2 { 0% { opacity: 0; } 34% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 0; } }
+  @keyframes rev3 { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes file1 { 0%, 33% { opacity: 0; transform: translate(-12px, 12px); } 38%, 100% { opacity: 1; transform: none; } }
+  @keyframes file2 { 0%, 49% { opacity: 0; transform: translate(-24px, 24px); } 54%, 100% { opacity: 1; transform: none; } }
+  @keyframes stamp { 0%, 66% { opacity: 0; transform: scale(1.4); } 71%, 100% { opacity: 1; transform: scale(1); } }
+  @keyframes prog { 0%, 24% { stroke-dashoffset: 320; } 36%, 52% { stroke-dashoffset: 160; } 64%, 100% { stroke-dashoffset: 0; } }
+  @keyframes dot2 { 0% { fill: var(--line-strong); } 36% { fill: var(--accent); } 100% { fill: var(--accent); } }
+  @keyframes dot3 { 0% { fill: var(--line-strong); } 64% { fill: var(--accent); } 100% { fill: var(--accent); } }
+
+  /* Laser level line */
+  .level { position: relative; width: 100vw; margin-left: calc(-1 * clamp(20px, 5vw, 72px)); margin-top: 32px; }
+  .laser { position: relative; height: 1.5px; background: var(--accent); box-shadow: 0 0 14px var(--accent); transform-origin: left center; animation: draw 1.4s cubic-bezier(.2,.7,.2,1) .2s both; overflow: visible; }
+  .laser::after { content: ""; position: absolute; top: -3px; width: 120px; height: 7px; border-radius: 4px; background: radial-gradient(closest-side, rgba(46,229,157,.9), transparent); animation: sweep 6s linear 1.6s infinite; }
+  .mark-level { position: absolute; right: clamp(20px, 5vw, 72px); top: -28px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: var(--accent); }
+
+  footer { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 32px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  footer .contacts { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+  footer a { text-decoration: none; color: var(--text); }
+  footer a:hover { color: var(--accent); }
+  footer .region { color: var(--muted); }
+  footer .meta { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+
+  @keyframes draw { from { transform: scaleX(0); opacity: .2; } to { transform: scaleX(1); opacity: 1; } }
+  @keyframes sweep { from { left: -120px; } to { left: 100%; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  main > * { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  main > *:nth-child(2) { animation-delay: .08s; } main > *:nth-child(3) { animation-delay: .16s; } main > *:nth-child(4) { animation-delay: .24s; } main > *:nth-child(5) { animation-delay: .32s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  @media (max-width: 1079px) { .visual { max-width: 380px; justify-self: start; } }
+</style>
+</head>
+<body>
+<div class="frame">
+  <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span>
+  <span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
+
+  <header>
+    <a class="logo" href="/" aria-label="UnaDesk">
+      <svg viewBox="0 4.25 48 48" aria-hidden="true"><path d="M4 15 H44" stroke="#2EE59D" stroke-width="3" fill="none"/><path d="M13 21 V29 C13 35.5 17.5 40 24 40 C30.5 40 35 35.5 35 29 V21" stroke="#EDEFEA" stroke-width="6" fill="none"/></svg>
+      <span class="word"><b>una</b><span>desk</span></span>
+    </a>
+  </header>
+
+  <div class="stage">
+  <div class="hero">
+  <main>
+    <div class="eyebrow">Готовимся к запуску</div>
+    <h1>Один стол на весь проект</h1>
+    <p class="slogan">Устраняем неопределённость не только на входе, но и в процессе</p>
+    <p class="lead">
+      Цифровые инструменты для строительства. Чертежи, исполнительная документация и решения — в одной актуальной версии для заказчика, подрядчиков и проектировщиков.
+      
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="mailto:info@unadesk.ru">Написать нам</a>
+    </div>
+  </main>
+    <figure class="visual" aria-hidden="true">
+      <svg class="doc" viewBox="0 0 460 560" width="460" height="560">
+        <g class="loop">
+          <text class="crumb" x="40" y="26">drive / ЖК «Северный» / КМ — фасады</text>
+          <!-- earlier revisions, filed behind the current sheet -->
+          <g class="back back2"><rect x="64" y="34" width="360" height="360" rx="4"/><text x="372" y="56">01</text></g>
+          <g class="back back1"><rect x="52" y="46" width="360" height="360" rx="4"/><text x="360" y="68">02</text></g>
+
+          <!-- current sheet -->
+          <rect class="sheet" x="40" y="58" width="360" height="360" rx="4"/>
+          <rect class="inner" x="52" y="70" width="336" height="336"/>
+
+          <!-- axes -->
+          <g class="axes">
+            <line class="ax" x1="100" y1="104" x2="100" y2="300"/><line class="ax" x1="190" y1="104" x2="190" y2="300"/>
+            <line class="ax" x1="280" y1="104" x2="280" y2="300"/><line class="ax" x1="370" y1="104" x2="370" y2="300"/>
+            <circle cx="100" cy="92" r="10"/><circle cx="190" cy="92" r="10"/><circle cx="280" cy="92" r="10"/><circle cx="370" cy="92" r="10"/>
+            <text x="100" y="96">1</text><text x="190" y="96">2</text><text x="280" y="96">3</text><text x="370" y="96">4</text>
+          </g>
+
+          <!-- facade panels, drafted one by one -->
+          <g class="panels">
+            <rect class="p p1" x="105" y="118" width="80" height="50"/><rect class="p p2" x="195" y="118" width="80" height="50"/><rect class="p p3" x="285" y="118" width="80" height="50"/>
+            <rect class="p p4" x="105" y="174" width="80" height="50"/><rect class="p p5" x="195" y="174" width="80" height="50"/><rect class="p p6" x="285" y="174" width="80" height="50"/>
+            <rect class="p p7" x="105" y="230" width="80" height="50"/><rect class="p p8" x="195" y="230" width="80" height="50"/><rect class="p p9" x="285" y="230" width="80" height="50"/>
+          </g>
+
+          <!-- dimension -->
+          <g class="dim">
+            <line x1="100" y1="296" x2="370" y2="296"/><line x1="100" y1="290" x2="100" y2="302"/><line x1="370" y1="290" x2="370" y2="302"/>
+            <line x1="96" y1="300" x2="104" y2="292"/><line x1="366" y1="300" x2="374" y2="292"/>
+            <text x="235" y="290">9000</text>
+          </g>
+
+          <!-- title block -->
+          <g class="tb">
+            <rect x="228" y="318" width="160" height="88"/>
+            <line x1="228" y1="346" x2="388" y2="346"/><line x1="318" y1="346" x2="318" y2="406"/><line x1="228" y1="376" x2="318" y2="376"/>
+            <text class="code" x="238" y="337">КМ-01-Ф-004</text>
+            <text class="small" x="238" y="366">ЛИСТ 4</text><text class="small" x="238" y="396">М 1:100</text><text class="small" x="328" y="364">РЕВ.</text><text class="rev r1" x="328" y="394">01</text><text class="rev r2" x="328" y="394">02</text><text class="rev r3" x="328" y="394">03</text>
+          </g>
+
+          <!-- approval stamp -->
+          <g class="stamp">
+            <rect x="64" y="340" width="148" height="40" rx="5"/>
+            <path d="M78 360 L85 367 L98 352"/>
+            <text x="106" y="365">АКТУАЛЬНО</text></g>
+
+          <!-- document flow -->
+          <g class="flow">
+            <line class="track" x1="60" y1="460" x2="380" y2="460"/>
+            <line class="prog" x1="60" y1="460" x2="380" y2="460"/>
+            <circle class="d d1" cx="60" cy="460" r="7"/><circle class="d d2" cx="220" cy="460" r="7"/><circle class="d d3" cx="380" cy="460" r="7"/>
+            <text class="lbl" x="60" y="490" text-anchor="start">ЗАГРУЖЕНО</text><text class="lbl" x="220" y="490">СОГЛАСОВАНИЕ</text><text class="lbl" x="380" y="490" text-anchor="end">УТВЕРЖДЕНО</text></g>
+          <text class="caption" x="40" y="540">ВСЕ РЕВИЗИИ — В ОДНОМ МЕСТЕ</text>
+          </g>
+      </svg>
+    </figure>
+  </div>
+    <div class="level" aria-hidden="true">
+      <span class="mark-level">ОТМ. ±0.000</span>
+      <div class="laser"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="contacts">
+      <a href="mailto:info@unadesk.ru">info@unadesk.ru</a>
+    </div>
+    <div class="meta"><a class="region" href="https://unadesk.com/" hreflang="en" lang="en">International → unadesk.com</a> · © 2026 UnaDesk · unadesk.ru</div>
+  </footer>
+</div>
+</body>
+</html>
