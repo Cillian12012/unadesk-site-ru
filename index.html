@@ -3,16 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- No third-party requests: everything on this page is served from this host. The policy below makes the browser enforce it. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <title>UnaDesk — цифровые инструменты для строительства</title>
-<meta name="description" content="UnaDesk — один стол на весь проект. Чертежи, исполнительная документация и решения в одной актуальной версии для всех участников объекта. Скоро запуск.">
+<meta name="description" content="UnaDesk — один стол на весь проект. Чертежи, исполнительная документация и решения в одной актуальной версии для всех участников объекта. Готовимся к запуску.">
 <meta name="theme-color" content="#0B0D10">
 <meta property="og:title" content="UnaDesk — один стол на весь проект">
-<meta property="og:description" content="Цифровые инструменты для строительства. Скоро запуск.">
+<meta property="og:description" content="Цифровые инструменты для строительства. Готовимся к запуску.">
 <meta property="og:url" content="https://unadesk.ru/">
+<link rel="canonical" href="https://unadesk.ru/">
 <link rel="alternate" hreflang="ru" href="https://unadesk.ru/">
 <link rel="alternate" hreflang="en" href="https://unadesk.com/">
 <link rel="alternate" hreflang="x-default" href="https://unadesk.com/">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preload" href="fonts/unbounded-cyrillic-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/manrope-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Fonts are self-hosted: the page makes no requests to third-party services */
   @font-face{font-family:'Unbounded';font-style:normal;font-display:swap;font-weight:300;src:url(fonts/unbounded-cyrillic-300-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
@@ -29,265 +35,739 @@
   @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:400;src:url(fonts/jetbrains-mono-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
   @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:500;src:url(fonts/jetbrains-mono-cyrillic-500-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
   @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:500;src:url(fonts/jetbrains-mono-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+
+  /* ── Registered custom properties: lets the browser animate them ───────── */
+  @property --sweep { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+  @property --rev { syntax: "<integer>"; inherits: true; initial-value: 3; }
+
+  /* ── Brand tokens (design-system/tokens.css). Dark is the base theme ───── */
   :root {
-    --bg: #0B0D10;
-    --surface: #15181D;
-    --line: #2A2F37;
-    --line-strong: #3A414B;
-    --text: #EDEFEA;
-    --muted: #8A919C;
-    --accent: #2EE59D;
-    --on-accent: #0B0D10;
+    color-scheme: dark;
+    --bg: #0B0D10; --surface: #15181D; --surface-raised: #1C2026;
+    --line: #2A2F37; --line-strong: #3A414B;
+    --text: #EDEFEA; --muted: #8A919C;
+    --accent: #2EE59D; --accent-text: #2EE59D; --on-accent: #0B0D10;
+    --warning: #F5A524; --danger: #FF6B6B;
+    --accent-soft: rgba(46,229,157,.14); --accent-hover: #2EE59D;
+    --glow: rgba(46,229,157,.55); --dot: rgba(138,145,156,.2); --veil: rgba(11,13,16,.86);
+    --sheet-back: #111418;
+
     --font-display: Unbounded, "Arial Black", sans-serif;
     --font-sans: Manrope, "Segoe UI", system-ui, sans-serif;
     --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
-    color-scheme: dark;
+    --pad: clamp(20px, 5vw, 72px);
+    --max: 1240px;
+    --hdr: 64px;
+    --ease: cubic-bezier(.2, .7, .2, 1);
   }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; }
+  /* Light theme from the same tokens. Follows the system setting; the switch in the header flips it (pure CSS, :has()) */
+  @supports (color: light-dark(#000, #fff)) {
+    :root {
+      --bg: light-dark(#F3F4F1, #0B0D10); --surface: light-dark(#FFFFFF, #15181D); --surface-raised: light-dark(#ECEDE9, #1C2026);
+      --line: light-dark(#D9DBD5, #2A2F37); --line-strong: light-dark(#B9BCB4, #3A414B);
+      --text: light-dark(#0B0D10, #EDEFEA); --muted: light-dark(#5D646E, #8A919C);
+      --accent: light-dark(#0FA36B, #2EE59D); --accent-text: light-dark(#0B7A50, #2EE59D);
+      --warning: light-dark(#9A5B00, #F5A524); --danger: light-dark(#C42B2B, #FF6B6B);
+      --accent-hover: var(--accent); --sheet-back: light-dark(#ECEDE9, #111418);
+      --veil: light-dark(rgba(243,244,241,.88), rgba(11,13,16,.86));
+    }
+    /* Dark by default (brand). The visitor's system theme is ignored: light only through the switch */
+    :root { color-scheme: dark; }
+    :root:has(#flip:checked) { color-scheme: light; }
+  }
+  /* Derived shades are computed from the tokens in OKLCH, not hand-picked */
+  @supports (color: color-mix(in oklch, red, blue)) {
+    :root {
+      --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
+      --glow: color-mix(in oklch, var(--accent) 60%, transparent);
+      --dot: color-mix(in oklch, var(--muted) 26%, transparent);
+      --veil: color-mix(in oklch, var(--bg) 86%, transparent);
+      --sheet-back: color-mix(in oklch, var(--surface) 55%, var(--bg));
+    }
+  }
+  @supports (color: oklch(from red l c h)) {
+    :root { --accent-hover: oklch(from var(--accent) calc(l + .05) c h); }
+  }
+
+  /* ── Base ──────────────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: calc(var(--hdr) + 16px); scrollbar-gutter: stable; }
   body {
-    margin: 0;
-    min-height: 100%;
-    background-color: var(--bg);
-    background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
-    background-size: 24px 24px;
-    color: var(--text);
-    font-family: var(--font-sans);
-    font-size: 16px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font-sans); font-size: clamp(16px, 0.35vw + 14.6px, 18px); line-height: 1.55;
+    font-kerning: normal; font-optical-sizing: auto; font-synthesis: none;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    overflow-x: clip;
   }
+  h1, h2, h3, p, ol, ul, figure { margin: 0; }
+  ol, ul { padding: 0; list-style: none; }
   a { color: inherit; }
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li { text-wrap: pretty; }
+  ::selection { background: var(--accent); color: var(--on-accent); }
+  :focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; border-radius: 4px; }
+  .sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .skip { position: fixed; left: 12px; top: 12px; z-index: 60; padding: 10px 14px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font-weight: 700; text-decoration: none; translate: 0 -200%; }
+  .skip:focus-visible { translate: 0 0; outline-color: var(--text); }
+  .wrap { width: 100%; max-width: calc(var(--max) + 2 * var(--pad)); margin-inline: auto; padding-inline: max(var(--pad), env(safe-area-inset-left)) max(var(--pad), env(safe-area-inset-right)); }
+  .mono, .lbl, .st { font-family: var(--font-mono); font-variant-numeric: tabular-nums slashed-zero; }
+  .lbl { font-size: 12px; line-height: 1.4; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .lbl b { font-weight: 500; color: var(--text); }
 
-  .frame {
-    position: relative;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: minmax(0, 1fr);
-    padding: max(24px, env(safe-area-inset-top)) clamp(20px, 5vw, 72px) max(24px, env(safe-area-inset-bottom));
-  }
-  .corner { position: absolute; width: 20px; height: 20px; border-color: var(--line-strong); border-style: solid; border-width: 0; pointer-events: none; }
-  .corner.tl { left: 12px; top: 12px; border-left-width: 1.5px; border-top-width: 1.5px; }
-  .corner.tr { right: 12px; top: 12px; border-right-width: 1.5px; border-top-width: 1.5px; }
-  .corner.bl { left: 12px; bottom: 12px; border-left-width: 1.5px; border-bottom-width: 1.5px; }
-  .corner.br { right: 12px; bottom: 12px; border-right-width: 1.5px; border-bottom-width: 1.5px; }
+  /* Drawing-style corner marks: 18 px, 1.5 px line */
+  .corners { position: absolute; inset: 12px; pointer-events: none; --c: linear-gradient(var(--line-strong) 0 0); background: var(--c) 0 0 / 18px 1.5px, var(--c) 0 0 / 1.5px 18px, var(--c) 100% 0 / 18px 1.5px, var(--c) 100% 0 / 1.5px 18px, var(--c) 0 100% / 18px 1.5px, var(--c) 0 100% / 1.5px 18px, var(--c) 100% 100% / 18px 1.5px, var(--c) 100% 100% / 1.5px 18px; background-repeat: no-repeat; }
 
-  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; position: relative; z-index: 2; }
-  .logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
-  .logo svg { width: 36px; height: 36px; display: block; }
-  .word { font-family: var(--font-display); font-size: 24px; line-height: 1; letter-spacing: -0.02em; }
+  /* ── Header ────────────────────────────────────────────────────────────── */
+  .hdr { position: sticky; top: 0; z-index: 50; background-color: var(--veil); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  .hdr-in { display: flex; align-items: center; gap: 16px; min-height: var(--hdr); padding-top: env(safe-area-inset-top); }
+  .logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; margin-right: auto; }
+  .logo svg { width: 34px; height: 34px; display: block; }
+  .logo .l, .desk .l { stroke: var(--accent); } .logo .u { stroke: var(--text); }
+  .word { font-family: var(--font-display); font-size: 22px; line-height: 1; letter-spacing: -.02em; }
   .word b { font-weight: 600; } .word span { font-weight: 300; }
-  .lang { display: flex; gap: 4px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; }
-  .lang button { font: inherit; color: var(--muted); background: transparent; border: 0; padding: 10px 10px; border-radius: 6px; cursor: pointer; }
-  .lang button[aria-pressed="true"] { background: var(--surface); color: var(--text); }
+  .nav { display: none; gap: 4px; font-size: 15px; }
+  .nav a { padding: 10px 12px; text-decoration: none; color: var(--muted); background: linear-gradient(var(--accent) 0 0) no-repeat 12px calc(100% - 6px) / 0 1.5px; transition: color .15s; }
+  .nav a:hover { color: var(--text); }
+  .nav:has(a:hover) a:not(:hover) { color: var(--muted); }
+  @media (min-width: 900px) { .nav { display: flex; } }
+  .theme { display: none; position: relative; width: 44px; height: 44px; place-items: center; border-radius: 6px; color: var(--muted); cursor: pointer; }
+  .theme:hover { color: var(--text); }
+  .theme input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .theme:has(input:focus-visible) { outline: 2px solid var(--accent-text); outline-offset: 0; }
+  .theme svg { width: 20px; height: 20px; transition: rotate .4s var(--ease); }
+  .theme:has(input:checked) svg { rotate: 180deg; }
+  .theme .for-light { display: none; }
+  .theme:has(input:checked) .for-dark { display: none; } .theme:has(input:checked) .for-light { display: inline; }
+  @supports (color: light-dark(#000, #fff)) and selector(:has(a)) { .theme { display: grid; } }
 
-  main { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 28px; padding-block: 48px 24px; min-width: 0; }
-  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; color: var(--accent); text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
-  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 2.4s ease-in-out infinite; }
-  h1 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(34px, 5.4vw, 76px); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
-  .slogan { margin: -8px 0 0; max-width: 640px; font-family: var(--font-display); font-weight: 300; font-size: clamp(18px, 2vw, 24px); line-height: 1.35; letter-spacing: -0.01em; color: var(--text); padding-left: 16px; border-left: 2px solid var(--accent); }
-  .lead { margin: 0; max-width: 600px; font-size: clamp(17px, 2vw, 20px); line-height: 1.55; color: var(--muted); }
-  .actions { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 8px; }
-  .btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px; border-radius: 6px; font-weight: 700; font-size: 15px; text-decoration: none; transition: filter .15s, background-color .15s, border-color .15s; }
-  .btn.primary { background: var(--accent); color: var(--on-accent); }
-  .btn.primary:hover { filter: brightness(1.08); }
-  .btn.ghost { border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); font-weight: 600; }
-  .btn.ghost:hover { border-color: var(--muted); }
-  .btn svg { width: 18px; height: 18px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 22px; border: 1px solid transparent; border-radius: 6px; font: inherit; font-weight: 700; font-size: 15px; line-height: 1; text-decoration: none; cursor: pointer; transition: background-color .15s, border-color .15s, scale .12s; -webkit-tap-highlight-color: transparent; }
+  .btn:active { scale: .98; }
+  .btn-primary { background: var(--accent); color: var(--on-accent); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-ghost { border-color: var(--line-strong); background: var(--surface); color: var(--text); font-weight: 600; }
+  .btn-ghost:hover { border-color: var(--muted); }
+  .btn svg { width: 18px; height: 18px; flex: none; transition: translate .2s var(--ease); }
+  .btn:hover svg { translate: 3px 0; }
+  .btn-sm { min-height: 40px; padding: 0 16px; font-size: 14px; }
+  .hdr .btn { display: none; }
+  @media (min-width: 560px) { .hdr .btn { display: inline-flex; } }
 
+  /* ── Hero ──────────────────────────────────────────────────────────────── */
+  .hero { position: relative; display: grid; grid-template-rows: 1fr auto; min-height: calc(100vh - var(--hdr) - 48px); min-height: calc(100svh - var(--hdr) - 48px); isolation: isolate; }
+  /* Axis grid: dots every 24 px, fading out towards the laser line */
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(var(--dot) 1px, transparent 1.5px) 0 0 / 24px 24px; -webkit-mask-image: linear-gradient(#000 30%, transparent 96%); mask-image: linear-gradient(#000 30%, transparent 96%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px 56px; align-items: center; padding-block: clamp(40px, 8vh, 96px) clamp(24px, 4vh, 48px); }
+  @media (min-width: 1000px) { .hero-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); } }
+  .hero-copy { display: grid; justify-items: start; gap: clamp(20px, 2.4vw, 30px); min-width: 0; }
+  .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--accent-text); }
+  .eyebrow::before { content: ""; width: 7px; height: 7px; background: var(--accent); }
+  h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(34px, 5.3vw, 74px); line-height: 1.04; letter-spacing: -.025em; }
+  .slogan { max-width: 30ch; padding-left: 16px; border-left: 2px solid var(--accent); font-family: var(--font-display); font-weight: 300; font-size: clamp(17px, 1.7vw, 23px); line-height: 1.35; letter-spacing: -.01em; }
+  .lead { max-width: 58ch; color: var(--muted); font-size: clamp(17px, 1.3vw, 20px); }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-top: 4px; }
 
-  /* Hero layout */
-  .stage { position: relative; z-index: 2; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-  .hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px 48px; align-items: center; }
-  @media (min-width: 1080px) { .hero { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); } }
-  .visual { margin: 0; width: 100%; max-width: 460px; justify-self: center; }
+  /* Hero drawing sheet */
+  .sheet { width: 100%; max-width: 440px; justify-self: center; }
+  @media (max-width: 999px) { .sheet { max-width: 360px; justify-self: start; } }
   .doc { display: block; width: 100%; height: auto; overflow: visible; }
-
-  /* Drawing — final state is the resting state (reduced motion shows it) */
-  .doc text { font-family: var(--font-mono); fill: var(--muted); font-size: 11px; letter-spacing: .06em; }
+  .doc text { font-family: var(--font-mono); font-variant-numeric: tabular-nums; fill: var(--muted); font-size: 11px; letter-spacing: .06em; }
   .doc .crumb { font-size: 12px; }
-  .doc .sheet { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2; }
-  .doc .inner { fill: none; stroke: var(--line); stroke-width: 1; }
-  .doc .back rect { fill: #111418; stroke: var(--line); stroke-width: 1; }
+  .doc .paper { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2; }
+  .doc .inner { fill: none; stroke: var(--line); }
+  .doc .back rect { fill: var(--sheet-back); stroke: var(--line); }
   .doc .back text { font-size: 10px; }
-  .doc .axes .ax { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 6 4; }
-  .doc .axes circle { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1; }
-  .doc .axes text { text-anchor: middle; font-size: 10px; }
+  .doc .ax { stroke: var(--line-strong); stroke-dasharray: 6 4; }
+  .doc .axes circle { fill: var(--surface); stroke: var(--line-strong); }
+  .doc .axes text, .doc .dim text { text-anchor: middle; font-size: 10px; }
   .doc .p { fill: none; stroke: var(--text); stroke-width: 1.4; stroke-dasharray: 260; stroke-dashoffset: 0; }
-  .doc .dim line { stroke: var(--muted); stroke-width: 1; }
-  .doc .dim text { text-anchor: middle; font-size: 10px; }
-  .doc .tb rect, .doc .tb line { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+  .doc .dim line { stroke: var(--muted); }
+  .doc .tb rect, .doc .tb line { fill: none; stroke: var(--line-strong); }
   .doc .tb .code { fill: var(--text); font-size: 12px; }
   .doc .tb .small { font-size: 10px; }
-  .doc .rev { fill: var(--accent); font-size: 16px; font-weight: 500; }
+  .doc .rev { fill: var(--accent-text); font-size: 16px; font-weight: 500; }
   .doc .r1, .doc .r2 { opacity: 0; }
-  .doc .stamp rect { fill: rgba(46,229,157,.12); stroke: var(--accent); stroke-width: 1.5; }
-  .doc .stamp path { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linecap: square; }
-  .doc .stamp text { fill: var(--accent); font-size: 13px; font-weight: 500; letter-spacing: .1em; }
   .doc .stamp { transform-box: fill-box; transform-origin: center; }
-  .doc .flow .track { stroke: var(--line); stroke-width: 2; }
-  .doc .flow .prog { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 320; stroke-dashoffset: 0; }
-  .doc .flow .d { fill: var(--accent); stroke: var(--bg); stroke-width: 3; }
-  .doc .flow .lbl { text-anchor: middle; font-size: 10px; }
-  .doc .caption { fill: var(--accent); font-size: 11px; letter-spacing: .12em; }
+  .doc .stamp rect { fill: var(--accent-soft); stroke: var(--accent-text); stroke-width: 1.5; }
+  .doc .stamp path { fill: none; stroke: var(--accent-text); stroke-width: 2.2; stroke-linecap: square; }
+  .doc .stamp text { fill: var(--accent-text); font-size: 13px; font-weight: 500; letter-spacing: .1em; }
+  .doc .track { stroke: var(--line); stroke-width: 2; }
+  .doc .prog { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 320; stroke-dashoffset: 0; }
+  .doc .d { fill: var(--accent); stroke: var(--bg); stroke-width: 3; }
+  .doc .flow text { text-anchor: middle; font-size: 10px; }
+  .doc .caption { letter-spacing: .12em; }
 
-  /* 12 s loop: draft → revisions filed behind → review → approved */
-  .doc .loop { animation: loop 12s linear infinite; }
-  .doc .p { animation: draft 12s cubic-bezier(.4,0,.2,1) infinite; }
-  .doc .p2 { animation-delay: .12s; } .doc .p3 { animation-delay: .24s; } .doc .p4 { animation-delay: .36s; }
-  .doc .p5 { animation-delay: .48s; } .doc .p6 { animation-delay: .6s; } .doc .p7 { animation-delay: .72s; }
-  .doc .p8 { animation-delay: .84s; } .doc .p9 { animation-delay: .96s; }
-  .doc .dim { animation: fadeDim 12s ease infinite; }
-  .doc .r1 { animation: rev1 12s steps(1) infinite; }
-  .doc .r2 { animation: rev2 12s steps(1) infinite; }
-  .doc .r3 { animation: rev3 12s steps(1) infinite; }
-  .doc .back1 { animation: file1 12s cubic-bezier(.2,.7,.2,1) infinite; }
-  .doc .back2 { animation: file2 12s cubic-bezier(.2,.7,.2,1) infinite; }
-  .doc .stamp { animation: stamp 12s cubic-bezier(.3,1.6,.5,1) infinite; }
-  .doc .flow .prog { animation: prog 12s ease infinite; }
-  .doc .d2 { animation: dot2 12s steps(1) infinite; }
-  .doc .d3 { animation: dot3 12s steps(1) infinite; }
+  /* The laser level line — one per composition */
+  .laser { position: relative; padding-top: 30px; }
+  .laser-mark { position: absolute; right: var(--pad); top: 0; color: var(--accent-text); letter-spacing: .08em; }
+  .laser-line { position: relative; display: block; height: 1.5px; background: var(--accent); transform-origin: left center; }
+  .laser-line::after { content: ""; position: absolute; inset: -8px 0; background: radial-gradient(90px 8px at var(--sweep) 50%, var(--glow), transparent); pointer-events: none; }
 
-  @keyframes loop { 0% { opacity: 0; } 3% { opacity: 1; } 91% { opacity: 1; } 97%, 100% { opacity: 0; } }
-  @keyframes draft { 0%, 2% { stroke-dashoffset: 260; } 18%, 100% { stroke-dashoffset: 0; } }
-  @keyframes fadeDim { 0%, 19% { opacity: 0; } 24%, 100% { opacity: 1; } }
-  @keyframes rev1 { 0% { opacity: 1; } 34% { opacity: 0; } 100% { opacity: 0; } }
-  @keyframes rev2 { 0% { opacity: 0; } 34% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 0; } }
-  @keyframes rev3 { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 1; } }
-  @keyframes file1 { 0%, 33% { opacity: 0; transform: translate(-12px, 12px); } 38%, 100% { opacity: 1; transform: none; } }
-  @keyframes file2 { 0%, 49% { opacity: 0; transform: translate(-24px, 24px); } 54%, 100% { opacity: 1; transform: none; } }
-  @keyframes stamp { 0%, 66% { opacity: 0; transform: scale(1.4); } 71%, 100% { opacity: 1; transform: scale(1); } }
-  @keyframes prog { 0%, 24% { stroke-dashoffset: 320; } 36%, 52% { stroke-dashoffset: 160; } 64%, 100% { stroke-dashoffset: 0; } }
-  @keyframes dot2 { 0% { fill: var(--line-strong); } 36% { fill: var(--accent); } 100% { fill: var(--accent); } }
-  @keyframes dot3 { 0% { fill: var(--line-strong); } 64% { fill: var(--accent); } 100% { fill: var(--accent); } }
+  /* ── Sections ──────────────────────────────────────────────────────────── */
+  .sec { padding-block: clamp(72px, 11vw, 152px); scroll-margin-top: var(--hdr); }
+  .sec + .sec { padding-top: 0; }
+  .sec-head { display: grid; gap: 22px; max-width: 820px; margin-bottom: clamp(36px, 5vw, 72px); }
+  h2 { font-family: var(--font-display); font-weight: 600; font-size: clamp(25px, 3.3vw, 44px); line-height: 1.12; letter-spacing: -.02em; }
+  .sec-head p { max-width: 62ch; color: var(--muted); font-size: clamp(17px, 1.3vw, 20px); }
+  h3 { font-size: 17px; line-height: 1.3; font-weight: 700; letter-spacing: -.005em; }
 
-  /* Laser level line */
-  .level { position: relative; width: 100vw; margin-left: calc(-1 * clamp(20px, 5vw, 72px)); margin-top: 32px; }
-  .laser { position: relative; height: 1.5px; background: var(--accent); box-shadow: 0 0 14px var(--accent); transform-origin: left center; animation: draw 1.4s cubic-bezier(.2,.7,.2,1) .2s both; overflow: visible; }
-  .laser::after { content: ""; position: absolute; top: -3px; width: 120px; height: 7px; border-radius: 4px; background: radial-gradient(closest-side, rgba(46,229,157,.9), transparent); animation: sweep 6s linear 1.6s infinite; }
-  .mark-level { position: absolute; right: clamp(20px, 5vw, 72px); top: -28px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: var(--accent); }
-
-  footer { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 32px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
-  footer .contacts { display: flex; flex-wrap: wrap; gap: 8px 28px; }
-  footer a { text-decoration: none; color: var(--text); }
-  footer a:hover { color: var(--accent); }
-  footer .region { color: var(--muted); }
-  footer .meta { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
-
-  @keyframes draw { from { transform: scaleX(0); opacity: .2; } to { transform: scaleX(1); opacity: 1; } }
-  @keyframes sweep { from { left: -120px; } to { left: 100%; } }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-  main > * { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
-  main > *:nth-child(2) { animation-delay: .08s; } main > *:nth-child(3) { animation-delay: .16s; } main > *:nth-child(4) { animation-delay: .24s; } main > *:nth-child(5) { animation-delay: .32s; }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
+  /* Parties on one level: the logo idea repeated — a desk (U) under one through-line */
+  .parties { container: parties / inline-size; }
+  .lvl { --y: 46%; position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); height: clamp(190px, 26cqi, 270px); margin-bottom: clamp(20px, 3cqi, 36px); }
+  .post { --c: var(--text); --bc: var(--line-strong); position: relative; display: grid; justify-items: center; align-content: end; }
+  .post::before { content: ""; position: absolute; top: 0; bottom: 26px; left: calc(50% - .5px); border-left: 1px dashed var(--line-strong); }
+  .bubble { position: relative; display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid var(--bc); border-radius: 50%; background: var(--bg); color: var(--muted); font-size: 11px; transition: border-color .2s, color .2s; }
+  .desk { position: absolute; top: calc(var(--y) + 9px); left: 50%; translate: -50% 0; display: grid; justify-items: center; gap: 10px; color: var(--c); transition: color .2s; }
+  .desk svg { display: block; width: clamp(34px, 5.4cqi, 58px); height: auto; overflow: visible; }
+  .desk svg path { fill: none; stroke: currentColor; stroke-width: 6; }
+  .desk::after { counter-reset: rev var(--rev); content: attr(data-p) counter(rev); padding: 1px 5px; background: var(--bg); color: var(--muted); font-size: clamp(10px, 1.2cqi + 6px, 12px); letter-spacing: .06em; white-space: nowrap; }
+  .lvl-line { position: absolute; left: 0; right: 0; top: var(--y); height: 2px; background: var(--accent); transform-origin: left center; z-index: 1; }
+  .lvl-mark { position: absolute; right: 0; top: calc(var(--y) - 24px); padding-left: 6px; background: var(--bg); color: var(--accent-text); letter-spacing: .08em; z-index: 1; }
+  /* Pointing at a party in the list lights up its desk on the diagram */
+  .parties:has(.role:nth-child(1):hover) .post:nth-child(1),
+  .parties:has(.role:nth-child(2):hover) .post:nth-child(2),
+  .parties:has(.role:nth-child(3):hover) .post:nth-child(3),
+  .parties:has(.role:nth-child(4):hover) .post:nth-child(4),
+  .parties:has(.role:nth-child(5):hover) .post:nth-child(5) { --c: var(--accent-text); --bc: var(--accent-text); }
+  .roles { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--line); }
+  .role { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 4px 16px; padding-block: 18px; border-bottom: 1px solid var(--line); }
+  .role .mono { grid-row: span 2; padding-top: 3px; color: var(--muted); font-size: 12px; }
+  .role p { color: var(--muted); font-size: 15px; line-height: 1.5; }
+  @container parties (min-width: 620px) {
+    .role { grid-template-columns: 26px minmax(0, 220px) minmax(0, 1fr); align-items: baseline; }
+    .role .mono { grid-row: auto; }
   }
-  @media (max-width: 1079px) { .visual { max-width: 380px; justify-self: start; } }
+  /* Wide enough: each party's text stands under its own axis */
+  @container parties (min-width: 980px) {
+    .roles { grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 0; }
+    .role { grid-template-columns: 1fr; align-content: start; justify-items: center; gap: 8px; padding: 0 12px; border-bottom: 0; text-align: center; }
+    .role .mono { display: none; }
+    .role p { hyphens: auto; }
+  }
+
+  /* Modules: one card component, its layout decided by its own width (container queries) */
+  .mods { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  @media (min-width: 880px) { .mods { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .mod { container: mod / inline-size; display: grid; }
+  .mod-lead { grid-column: 1 / -1; }
+  .mod-in { display: grid; align-content: start; gap: 28px; padding: 24px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .mod-main { display: grid; align-content: start; gap: 10px; }
+  .mod-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .mod-n { color: var(--muted); font-size: 12px; letter-spacing: .08em; }
+  .mod-name { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.1; letter-spacing: -.02em; }
+  .mod p { color: var(--muted); font-size: 15px; line-height: 1.5; max-width: 46ch; }
+  .st { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; line-height: 1.3; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .st::before { content: ""; width: 6px; height: 6px; background: var(--line-strong); flex: none; }
+  .st-on { color: var(--text); } .st-on::before, .st-ok::before { background: var(--accent); }
+  .st-ok { color: var(--accent-text); }
+  .st-wait { color: var(--warning); } .st-wait::before { background: var(--warning); }
+  .st-no { color: var(--danger); } .st-no::before { background: var(--danger); }
+  .files { display: grid; gap: 10px; align-content: start; }
+  .files ul { border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+  .files li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 12px 14px; font-size: 13px; }
+  .files li + li { border-top: 1px solid var(--line); }
+  .f-name { grid-column: 1 / -1; overflow-wrap: anywhere; }
+  .f-size { color: var(--muted); }
+  @container mod (min-width: 520px) {
+    .files li { grid-template-columns: minmax(0, 1fr) 7ch 17ch; align-items: center; }
+    .f-name { grid-column: auto; }
+    .f-size { text-align: right; }
+  }
+  @container mod (min-width: 860px) {
+    .mod-in { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 48px; padding: 32px; }
+    .mod-name { font-size: 32px; }
+  }
+  .note { max-width: 70ch; margin-top: 28px; padding-left: 16px; border-left: 1px solid var(--line-strong); color: var(--muted); font-size: 15px; }
+
+  .why { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 32px 40px; }
+  .why li { display: grid; align-content: start; gap: 10px; padding-top: 20px; border-top: 1px solid var(--line-strong); }
+  .why p { color: var(--muted); font-size: 15.5px; }
+
+  /* Contact */
+  .contact-box { position: relative; display: grid; justify-items: start; gap: 22px; padding: clamp(44px, 6vw, 80px) clamp(28px, 6vw, 80px); border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .contact-box p { max-width: 54ch; color: var(--muted); font-size: clamp(17px, 1.3vw, 20px); }
+  .addr { font-size: 15px; text-decoration: none; padding-block: 12px; border-bottom: 1px solid var(--line-strong); line-height: 1; transition: border-color .15s, color .15s; }
+  .addr:hover { color: var(--accent-text); border-color: var(--accent-text); }
+  #copy { anchor-name: --copy; }
+  .toast { position: fixed; inset: auto auto 24px 50%; translate: -50% 0; margin: 0; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface-raised); color: var(--text); font-size: 13px; white-space: nowrap; z-index: 70; }
+  .toast:empty { display: none; }
+  @supports (position-area: top) {
+    .toast { position-anchor: --copy; position-area: bottom; inset: auto; translate: none; margin-top: 10px; position-try-fallbacks: flip-block; }
+  }
+
+  .ftr { border-top: 1px solid var(--line); }
+  .ftr-in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; padding-block: 28px max(28px, env(safe-area-inset-bottom)); color: var(--muted); font-size: 12px; letter-spacing: .06em; }
+  .ftr a { color: var(--text); text-decoration: none; padding-block: 6px; }
+  .ftr a:hover { color: var(--accent-text); }
+  .ftr-in, .ftr-meta { align-items: center; }
+  .ftr-meta { display: flex; flex-wrap: wrap; gap: 6px 20px; text-transform: uppercase; }
+
+  /* Theme switch: a horizontal laser pass (View Transitions API) */
+  .scan { position: fixed; left: 0; right: 0; top: 0; height: 2px; background: var(--accent); box-shadow: 0 0 18px 1px var(--glow); pointer-events: none; z-index: 100; display: none; }
+  .vt .scan { display: block; view-transition-name: scan; }
+  .vt-end .scan { top: calc(100% - 2px); }
+
+  /* Trim the built-in font leading so spacing is measured from the letters themselves */
+  @supports (text-box: trim-both cap alphabetic) {
+    h1, h2, .mod-name { text-box: trim-both cap alphabetic; }
+  }
+
+  /* ── State driven by scroll position (not motion: stays on with reduced motion) ── */
+  @supports (animation-timeline: scroll()) {
+    /* Header line appears once the page leaves the top */
+    .hdr { animation: hdr linear both; animation-timeline: scroll(root block); animation-range: 0 96px; }
+    @keyframes hdr { from { border-bottom-color: transparent; background-color: transparent; } }
+    /* Current section in the menu, no JavaScript */
+    body { timeline-scope: --s-parties, --s-modules, --s-approach, --s-contact; }
+    #parties { view-timeline-name: --s-parties; } #modules { view-timeline-name: --s-modules; }
+    #approach { view-timeline-name: --s-approach; } #contact { view-timeline-name: --s-contact; }
+    .sec { view-timeline-axis: block; view-timeline-inset: 60% 39%; }
+    .nav a { animation: spy linear; }
+    .nav a[href="#parties"] { animation-timeline: --s-parties; } .nav a[href="#modules"] { animation-timeline: --s-modules; }
+    .nav a[href="#approach"] { animation-timeline: --s-approach; } .nav a[href="#contact"] { animation-timeline: --s-contact; }
+    @keyframes spy { from, to { color: var(--text); background-size: calc(100% - 24px) 1.5px; } }
+  }
+
+  /* ── Motion: only when the visitor has not asked to reduce it ──────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+
+    /* Hero text settles in on first paint — @starting-style, no keyframes, no JS */
+    .hero-copy > * { transition: opacity .7s var(--ease), translate .7s var(--ease); transition-delay: calc(var(--i, 0) * 70ms); transition-delay: calc((sibling-index() - 1) * 70ms); }
+    .hero-copy > :nth-child(2) { --i: 1; } .hero-copy > :nth-child(3) { --i: 2; } .hero-copy > :nth-child(4) { --i: 3; } .hero-copy > :nth-child(5) { --i: 4; }
+    @starting-style { .hero-copy > * { opacity: 0; translate: 0 14px; } }
+
+    .laser-line { animation: draw 1.3s var(--ease) .25s both; }
+    @keyframes draw { from { scale: 0 1; opacity: .2; } }
+
+    /* The sheet is drafted once: lines → revisions 01, 02 filed behind → 03 approved. Then it rests */
+    .doc .loop { animation: sheet-in 6s linear .3s both; }
+    .doc .p { animation: draft 6s cubic-bezier(.4, 0, .2, 1) .3s both; }
+    .doc .p2 { animation-delay: .42s; } .doc .p3 { animation-delay: .54s; } .doc .p4 { animation-delay: .66s; }
+    .doc .p5 { animation-delay: .78s; } .doc .p6 { animation-delay: .9s; } .doc .p7 { animation-delay: 1.02s; }
+    .doc .p8 { animation-delay: 1.14s; } .doc .p9 { animation-delay: 1.26s; }
+    .doc .dim { animation: fade-dim 6s ease .3s both; }
+    .doc .r1 { animation: rev1 6s steps(1) .3s both; }
+    .doc .r2 { animation: rev2 6s steps(1) .3s both; }
+    .doc .r3 { animation: rev3 6s steps(1) .3s both; }
+    .doc .back1 { animation: file1 6s var(--ease) .3s both; }
+    .doc .back2 { animation: file2 6s var(--ease) .3s both; }
+    .doc .stamp { animation: stamp 6s cubic-bezier(.3, 1.4, .5, 1) .3s both; }
+    .doc .prog { animation: prog 6s ease .3s both; }
+    .doc .d2 { animation: dot-off 2.76s steps(1, end) .3s both; }
+    .doc .d3 { animation: dot-off 4.8s steps(1, end) .3s both; }
+    @keyframes sheet-in { 0% { opacity: 0; } 6%, 100% { opacity: 1; } }
+    @keyframes draft { 0%, 3% { stroke-dashoffset: 260; } 26%, 100% { stroke-dashoffset: 0; } }
+    @keyframes fade-dim { 0%, 26% { opacity: 0; } 32%, 100% { opacity: 1; } }
+    @keyframes rev1 { 0% { opacity: 1; } 44%, 100% { opacity: 0; } }
+    @keyframes rev2 { 0% { opacity: 0; } 44% { opacity: 1; } 64%, 100% { opacity: 0; } }
+    @keyframes rev3 { 0% { opacity: 0; } 64%, 100% { opacity: 1; } }
+    @keyframes file1 { 0%, 43% { opacity: 0; transform: translate(-12px, 12px); } 50%, 100% { opacity: 1; transform: none; } }
+    @keyframes file2 { 0%, 63% { opacity: 0; transform: translate(-24px, 24px); } 70%, 100% { opacity: 1; transform: none; } }
+    @keyframes stamp { 0%, 84% { opacity: 0; transform: scale(1.35); } 91%, 100% { opacity: 1; transform: scale(1); } }
+    @keyframes prog { 0%, 30% { stroke-dashoffset: 320; } 46%, 64% { stroke-dashoffset: 160; } 80%, 100% { stroke-dashoffset: 0; } }
+    @keyframes dot-off { from { fill: var(--line-strong); } }
+
+    /* "Address copied" note: entry and exit via @starting-style + allow-discrete */
+    .toast { opacity: 0; scale: .96; transition: opacity .18s, scale .18s var(--ease), display .18s allow-discrete, overlay .18s allow-discrete; }
+    .toast:popover-open { opacity: 1; scale: 1; }
+    @starting-style { .toast:popover-open { opacity: 0; scale: .96; } }
+
+    /* Theme switch */
+    ::view-transition-old(root) { animation: none; mix-blend-mode: normal; }
+    ::view-transition-new(root) { animation: vt-wipe .75s cubic-bezier(.4, 0, .2, 1) both; mix-blend-mode: normal; }
+    ::view-transition-group(scan) { animation-duration: .75s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+    ::view-transition-old(scan) { display: none; }
+    ::view-transition-new(scan) { animation: none; }
+    @keyframes vt-wipe { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+
+    /* Scroll-driven animation: tied to the scroll position, runs off the main thread */
+    @supports (animation-timeline: view()) {
+      /* The glow travels along the laser line as the page moves */
+      .laser-line::after { animation: sweep linear both; animation-timeline: view(block); }
+      @keyframes sweep { from { --sweep: 4%; } to { --sweep: 96%; } }
+
+      /* Blocks rise into place as they enter the viewport */
+      .rv { animation: rise linear both; animation-timeline: view(block); animation-range: entry 0% entry 100%; }
+      .mods .rv:nth-child(3), .why .rv:nth-child(2) { animation-range: entry 15% entry 115%; }
+      .mods .rv:nth-child(4), .why .rv:nth-child(3) { animation-range: entry 30% entry 130%; }
+      @keyframes rise { from { opacity: 0; translate: 0 28px; } }
+
+      /* Everyone starts at a different level with a different revision; the line brings them to one */
+      .lvl { view-timeline: --lvl block; }
+      .lvl-line { animation: lvl-draw linear both; animation-timeline: --lvl; animation-range: entry 30% cover 40%; }
+      .lvl-mark { animation: lvl-mark linear both; animation-timeline: --lvl; animation-range: cover 38% cover 48%; }
+      .desk { animation: lvl-align cubic-bezier(.3, 0, .2, 1) both; animation-timeline: --lvl; animation-range: cover 22% cover 50%; }
+      .post:nth-child(2) .desk { animation-range: cover 25% cover 52%; }
+      .post:nth-child(3) .desk { animation-range: cover 28% cover 54%; }
+      .post:nth-child(4) .desk { animation-range: cover 31% cover 56%; }
+      .post:nth-child(5) .desk { animation-range: cover 34% cover 58%; }
+      @keyframes lvl-draw { from { scale: 0 1; } }
+      @keyframes lvl-mark { from { opacity: 0; } }
+      @keyframes lvl-align { from { translate: -50% var(--off); --rev: var(--from); opacity: .5; } }
+    }
+  }
+
+  /* ── 3D: renders made in Blender (img/*.webp). Only the current theme's file is fetched ── */
+  :root { --img-desk: url("img/desk-dark.webp"); --s0: url("img/sheet-dark-0.webp"); --s1: url("img/sheet-dark-1.webp"); --s2: url("img/sheet-dark-2.webp"); }
+  :root:has(#flip:checked) { --img-desk: url("img/desk-light.webp"); --s0: url("img/sheet-light-0.webp"); --s1: url("img/sheet-light-1.webp"); --s2: url("img/sheet-light-2.webp"); }
+  .o3d { display: block; width: 100%; aspect-ratio: var(--ar); background: var(--img) var(--pos, 0 0) / var(--size, 100% 100%) no-repeat; filter: drop-shadow(0 18px 36px color-mix(in srgb, var(--accent) 28%, transparent)); pointer-events: none; user-select: none; }
+  /* Rotation set: 8 frames in one image, the frame is picked by background-position (static frame without scroll animation) */
+  .o3d-desk { --ar: 560 / 480; --img: var(--img-desk); --size: 800% 100%; --pos: 43% 0; }
+  .o3d-sheets { --ar: 760 / 560; position: relative; background: none; max-width: 520px; justify-self: center; }
+  .o3d-sheets .sl { position: absolute; inset: 0; background: var(--s) center / 100% 100% no-repeat; }
+  .sl0 { --s: var(--s0); } .sl1 { --s: var(--s1); } .sl2 { --s: var(--s2); }
+  .head-3d { display: grid; gap: clamp(0px, 3vw, 40px); align-items: center; }
+  .head-3d .o3d-sheets { display: none; }
+  @media (min-width: 960px) {
+    .head-3d { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); margin-bottom: clamp(36px, 5vw, 72px); }
+    .head-3d .sec-head { margin-bottom: 0; }
+    .head-3d .o3d-sheets { display: block; }
+  }
+  .contact-box .o3d-desk { display: none; }
+  @media (min-width: 900px) {
+    .contact-box { padding-right: min(44%, 520px); }
+    .contact-box .o3d-desk { display: block; position: absolute; right: clamp(16px, 4vw, 56px); top: 50%; translate: 0 -50%; width: min(38%, 440px); }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      /* The desk turns to face the viewer as the contact block scrolls into view */
+      /* Tied to the last 380 px of the page so the turn always finishes at the very bottom, on any window size */
+      .contact-box .o3d-desk { animation: desk-turn steps(8, jump-none) both; animation-timeline: scroll(root); animation-range: calc(100% - 380px) 100%; }
+      @keyframes desk-turn { from { background-position: 0 0; } to { background-position: 100% 0; } }
+      /* The sheets come together into one stack as the block scrolls into view */
+      .o3d-sheets .sl { animation: sheet-fold linear both; animation-timeline: view(block); animation-range: cover calc(16% + 200px) cover calc(42% + 200px); }
+      .o3d-sheets .sl2 { --dx: 8%; --dy: -52%; --rot: -4deg; }
+      .o3d-sheets .sl1 { --dx: 4%; --dy: -26%; --rot: -2deg; animation-range: cover calc(19% + 200px) cover calc(40% + 200px); }
+      .o3d-sheets .sl0 { animation: none; }
+      @keyframes sheet-fold { from { translate: var(--dx) var(--dy); rotate: var(--rot); opacity: 0; } 15% { opacity: 1; } }
+    }
+  }
+
+  /* ── Backdrop: a barely visible underlay of drawing axes and one dimension chain, built up as the page scrolls ── */
+  .bgx {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+    --bgx-c: color-mix(in srgb, var(--line-strong) 36%, transparent);
+    --bgx-t: color-mix(in srgb, var(--muted) 34%, transparent);
+    --x1: 14%; --x2: 38%; --x3: 62%; --x4: 86%; --y1: 68%; --y2: 32%;
+  }
+  .bgx span { position: absolute; display: block; }
+  .hero { background: var(--bg); } /* the first screen stays clean: the underlay shows only below it */
+  .bgx .v1 { --x: var(--x1); } .bgx .v2 { --x: var(--x2); } .bgx .v3 { --x: var(--x3); } .bgx .v4 { --x: var(--x4); }
+  .bgx .h1 { --y: var(--y1); } .bgx .h2 { --y: var(--y2); }
+  .bgx .av { left: var(--x); top: 104px; bottom: 46px; width: 1px; background: repeating-linear-gradient(to bottom, var(--bgx-c) 0 20px, transparent 20px 25px, var(--bgx-c) 25px 27px, transparent 27px 32px); -webkit-mask-image: linear-gradient(to top, #000 12%, rgb(0 0 0 / .4) 60%); mask-image: linear-gradient(to top, #000 12%, rgb(0 0 0 / .4) 60%); }
+  .bgx .ah { top: var(--y); left: 46px; right: 28px; height: 1px; background: repeating-linear-gradient(to right, var(--bgx-c) 0 20px, transparent 20px 25px, var(--bgx-c) 25px 27px, transparent 27px 32px); -webkit-mask-image: linear-gradient(to right, #000 4%, rgb(0 0 0 / .3) 26%); mask-image: linear-gradient(to right, #000 4%, rgb(0 0 0 / .3) 26%); }
+  .bgx .mk { width: 22px; height: 22px; border: 1px solid var(--bgx-c); border-radius: 50%; color: var(--bgx-t); font: 500 10px/20px var(--font-mono); text-align: center; }
+  .bgx .mk.n { left: var(--x); bottom: 24px; margin-left: -11px; }
+  .bgx .mk.l { top: var(--y); left: 24px; margin-top: -11px; }
+  .bgx .dm { left: var(--x1); right: calc(100% - var(--x4)); bottom: 70px; height: 1px; background: var(--bgx-c); }
+  .bgx .tk { left: var(--x); bottom: 70px; width: 11px; height: 1px; margin-left: -5px; rotate: -45deg; background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  .bgx .dt { left: var(--x); bottom: 75px; translate: -50% 0; color: var(--bgx-t); font: 500 10px/1 var(--font-mono); }
+  .bgx .d1 { --x: calc((var(--x1) + var(--x2)) / 2); } .bgx .d2 { --x: calc((var(--x2) + var(--x3)) / 2); } .bgx .d3 { --x: calc((var(--x3) + var(--x4)) / 2); }
+  @media (max-width: 640px) {
+    .bgx { --x1: 10px; --x2: calc(100% - 11px); }
+    .bgx .v3, .bgx .v4, .bgx .ah, .bgx .mk.l, .bgx .dm, .bgx .tk, .bgx .dt { display: none; }
+    .bgx .mk.n { width: 16px; height: 16px; margin-left: -8px; bottom: 14px; font-size: 8px; line-height: 14px; }
+    .bgx .av { bottom: 30px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .bgx span { animation: 1s linear both; animation-timeline: scroll(root); animation-range: var(--r); }
+      .bgx .av { animation-name: bgx-down; }
+      .bgx .ah, .bgx .dm { animation-name: bgx-right; }
+      .bgx .mk, .bgx .tk, .bgx .dt { animation-name: bgx-fade; }
+      @keyframes bgx-down { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+      @keyframes bgx-right { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+      @keyframes bgx-fade { from { opacity: 0; } }
+    }
+  }
+
+  @media print {
+    .hdr { position: static; } .theme, .scan, #copy, .bgx { display: none !important; }
+  }
 </style>
 </head>
 <body>
-<div class="frame">
-  <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span>
-  <span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
+<div class="bgx" aria-hidden="true">
+  <span class="av v1" style="--r:10% 26%"></span>
+  <span class="av v2" style="--r:13% 29%"></span>
+  <span class="av v3" style="--r:16% 32%"></span>
+  <span class="av v4" style="--r:19% 35%"></span>
+  <span class="mk n v1" style="--r:24% 32%">1</span>
+  <span class="mk n v2" style="--r:27% 35%">2</span>
+  <span class="mk n v3" style="--r:30% 38%">3</span>
+  <span class="mk n v4" style="--r:33% 41%">4</span>
+  <span class="ah h1" style="--r:32% 48%"></span>
+  <span class="ah h2" style="--r:36% 52%"></span>
+  <span class="mk l h1" style="--r:46% 54%">А</span>
+  <span class="mk l h2" style="--r:50% 58%">Б</span>
+  <span class="dm" style="--r:54% 70%"></span>
+  <span class="tk v1" style="--r:54% 60%"></span>
+  <span class="tk v2" style="--r:58% 64%"></span>
+  <span class="tk v3" style="--r:62% 68%"></span>
+  <span class="tk v4" style="--r:66% 72%"></span>
+  <span class="dt d1" style="--r:64% 74%">6000</span>
+  <span class="dt d2" style="--r:68% 78%">6000</span>
+  <span class="dt d3" style="--r:72% 82%">6000</span>
+</div>
+<a class="skip" href="#main">К содержанию</a>
 
-  <header>
-    <a class="logo" href="/" aria-label="UnaDesk">
-      <svg viewBox="0 4.25 48 48" aria-hidden="true"><path d="M4 15 H44" stroke="#2EE59D" stroke-width="3" fill="none"/><path d="M13 21 V29 C13 35.5 17.5 40 24 40 C30.5 40 35 35.5 35 29 V21" stroke="#EDEFEA" stroke-width="6" fill="none"/></svg>
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="logo" href="/" aria-label="UnaDesk — на главную">
+      <svg viewBox="0 4.25 48 48" aria-hidden="true"><path class="l" d="M4 15 H44" stroke-width="3" fill="none"/><path class="u" d="M13 21 V29 C13 35.5 17.5 40 24 40 C30.5 40 35 35.5 35 29 V21" stroke-width="6" fill="none"/></svg>
       <span class="word"><b>una</b><span>desk</span></span>
     </a>
-  </header>
-
-  <div class="stage">
-  <div class="hero">
-  <main>
-    <div class="eyebrow">Готовимся к запуску</div>
-    <h1>Один стол на весь проект</h1>
-    <p class="slogan">Устраняем неопределённость не только на входе, но и в процессе</p>
-    <p class="lead">
-      Цифровые инструменты для строительства. Чертежи, исполнительная документация и решения — в одной актуальной версии для заказчика, подрядчиков и проектировщиков.
-      
-    </p>
-    <div class="actions">
-      <a class="btn primary" href="mailto:info@unadesk.ru">Написать нам</a>
-    </div>
-  </main>
-    <figure class="visual" aria-hidden="true">
-      <svg class="doc" viewBox="0 0 460 560" width="460" height="560">
-        <g class="loop">
-          <text class="crumb" x="40" y="26">drive / ЖК «Северный» / КМ — фасады</text>
-          <!-- earlier revisions, filed behind the current sheet -->
-          <g class="back back2"><rect x="64" y="34" width="360" height="360" rx="4"/><text x="372" y="56">01</text></g>
-          <g class="back back1"><rect x="52" y="46" width="360" height="360" rx="4"/><text x="360" y="68">02</text></g>
-
-          <!-- current sheet -->
-          <rect class="sheet" x="40" y="58" width="360" height="360" rx="4"/>
-          <rect class="inner" x="52" y="70" width="336" height="336"/>
-
-          <!-- axes -->
-          <g class="axes">
-            <line class="ax" x1="100" y1="104" x2="100" y2="300"/><line class="ax" x1="190" y1="104" x2="190" y2="300"/>
-            <line class="ax" x1="280" y1="104" x2="280" y2="300"/><line class="ax" x1="370" y1="104" x2="370" y2="300"/>
-            <circle cx="100" cy="92" r="10"/><circle cx="190" cy="92" r="10"/><circle cx="280" cy="92" r="10"/><circle cx="370" cy="92" r="10"/>
-            <text x="100" y="96">1</text><text x="190" y="96">2</text><text x="280" y="96">3</text><text x="370" y="96">4</text>
-          </g>
-
-          <!-- facade panels, drafted one by one -->
-          <g class="panels">
-            <rect class="p p1" x="105" y="118" width="80" height="50"/><rect class="p p2" x="195" y="118" width="80" height="50"/><rect class="p p3" x="285" y="118" width="80" height="50"/>
-            <rect class="p p4" x="105" y="174" width="80" height="50"/><rect class="p p5" x="195" y="174" width="80" height="50"/><rect class="p p6" x="285" y="174" width="80" height="50"/>
-            <rect class="p p7" x="105" y="230" width="80" height="50"/><rect class="p p8" x="195" y="230" width="80" height="50"/><rect class="p p9" x="285" y="230" width="80" height="50"/>
-          </g>
-
-          <!-- dimension -->
-          <g class="dim">
-            <line x1="100" y1="296" x2="370" y2="296"/><line x1="100" y1="290" x2="100" y2="302"/><line x1="370" y1="290" x2="370" y2="302"/>
-            <line x1="96" y1="300" x2="104" y2="292"/><line x1="366" y1="300" x2="374" y2="292"/>
-            <text x="235" y="290">9000</text>
-          </g>
-
-          <!-- title block -->
-          <g class="tb">
-            <rect x="228" y="318" width="160" height="88"/>
-            <line x1="228" y1="346" x2="388" y2="346"/><line x1="318" y1="346" x2="318" y2="406"/><line x1="228" y1="376" x2="318" y2="376"/>
-            <text class="code" x="238" y="337">КМ-01-Ф-004</text>
-            <text class="small" x="238" y="366">ЛИСТ 4</text><text class="small" x="238" y="396">М 1:100</text><text class="small" x="328" y="364">РЕВ.</text><text class="rev r1" x="328" y="394">01</text><text class="rev r2" x="328" y="394">02</text><text class="rev r3" x="328" y="394">03</text>
-          </g>
-
-          <!-- approval stamp -->
-          <g class="stamp">
-            <rect x="64" y="340" width="148" height="40" rx="5"/>
-            <path d="M78 360 L85 367 L98 352"/>
-            <text x="106" y="365">АКТУАЛЬНО</text></g>
-
-          <!-- document flow -->
-          <g class="flow">
-            <line class="track" x1="60" y1="460" x2="380" y2="460"/>
-            <line class="prog" x1="60" y1="460" x2="380" y2="460"/>
-            <circle class="d d1" cx="60" cy="460" r="7"/><circle class="d d2" cx="220" cy="460" r="7"/><circle class="d d3" cx="380" cy="460" r="7"/>
-            <text class="lbl" x="60" y="490" text-anchor="start">ЗАГРУЖЕНО</text><text class="lbl" x="220" y="490">СОГЛАСОВАНИЕ</text><text class="lbl" x="380" y="490" text-anchor="end">УТВЕРЖДЕНО</text></g>
-          <text class="caption" x="40" y="540">ВСЕ РЕВИЗИИ — В ОДНОМ МЕСТЕ</text>
-          </g>
-      </svg>
-    </figure>
+    <nav class="nav" aria-label="Разделы страницы">
+      <a href="#parties">Участники</a>
+      <a href="#modules">Модули</a>
+      <a href="#approach">Подход</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <label class="theme">
+      <input type="checkbox" id="flip" role="switch" autocomplete="off">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M12 3.8 A8.2 8.2 0 0 1 12 20.2 Z" fill="currentColor"/></svg>
+      <span class="sr for-dark">Светлая тема</span><span class="sr for-light">Тёмная тема</span>
+    </label>
+    <a class="btn btn-ghost btn-sm" href="mailto:info@unadesk.ru">Написать нам</a>
   </div>
-    <div class="level" aria-hidden="true">
-      <span class="mark-level">ОТМ. ±0.000</span>
-      <div class="laser"></div>
-    </div>
-  </div>
+</header>
 
-  <footer>
-    <div class="contacts">
-      <a href="mailto:info@unadesk.ru">info@unadesk.ru</a>
+<main id="main">
+  <section class="hero" aria-labelledby="h-hero">
+    <div class="corners" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="lbl eyebrow">Готовимся к запуску</p>
+        <h1 id="h-hero">Один стол на&nbsp;весь проект</h1>
+        <p class="slogan">Устраняем неопределённость не&nbsp;только на&nbsp;входе, но&nbsp;и&nbsp;в&nbsp;процессе</p>
+        <p class="lead">Цифровые инструменты для&nbsp;строительства. Чертежи, исполнительная документация и&nbsp;решения — в&nbsp;одной актуальной версии для&nbsp;заказчика, генподрядчика, субподрядчиков, проектировщиков и&nbsp;поставщиков.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="mailto:info@unadesk.ru">Написать нам<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12 H19 M13 6 L19 12 L13 18"/></svg></a>
+        </div>
+      </div>
+
+      <figure class="sheet" role="img" aria-label="Пример: лист КМ-01-Ф-004, ревизия 03, статус «Актуально». Предыдущие ревизии 01 и 02 сохранены">
+        <svg class="doc" viewBox="0 0 460 560" width="460" height="560" aria-hidden="true">
+          <g class="loop">
+            <text class="crumb" x="40" y="26">drive / ЖК «Северный» / КМ — фасады</text>
+            <g class="back back2"><rect x="64" y="34" width="360" height="360" rx="4"/><text x="372" y="56">01</text></g>
+            <g class="back back1"><rect x="52" y="46" width="360" height="360" rx="4"/><text x="360" y="68">02</text></g>
+            <rect class="paper" x="40" y="58" width="360" height="360" rx="4"/>
+            <rect class="inner" x="52" y="70" width="336" height="336"/>
+            <g class="axes">
+              <line class="ax" x1="100" y1="106" x2="100" y2="293"/><line class="ax" x1="190" y1="106" x2="190" y2="293"/>
+              <line class="ax" x1="280" y1="106" x2="280" y2="293"/><line class="ax" x1="370" y1="106" x2="370" y2="293"/>
+              <circle cx="100" cy="303" r="10"/><circle cx="190" cy="303" r="10"/><circle cx="280" cy="303" r="10"/><circle cx="370" cy="303" r="10"/>
+              <text x="100" y="307">1</text><text x="190" y="307">2</text><text x="280" y="307">3</text><text x="370" y="307">4</text>
+            </g>
+            <g class="panels">
+              <rect class="p p1" x="105" y="118" width="80" height="50"/><rect class="p p2" x="195" y="118" width="80" height="50"/><rect class="p p3" x="285" y="118" width="80" height="50"/>
+              <rect class="p p4" x="105" y="174" width="80" height="50"/><rect class="p p5" x="195" y="174" width="80" height="50"/><rect class="p p6" x="285" y="174" width="80" height="50"/>
+              <rect class="p p7" x="105" y="230" width="80" height="50"/><rect class="p p8" x="195" y="230" width="80" height="50"/><rect class="p p9" x="285" y="230" width="80" height="50"/>
+            </g>
+            <g class="dim">
+              <line x1="100" y1="96" x2="370" y2="96"/><line x1="100" y1="90" x2="100" y2="102"/><line x1="370" y1="90" x2="370" y2="102"/>
+              <line x1="96" y1="100" x2="104" y2="92"/><line x1="366" y1="100" x2="374" y2="92"/>
+              <text x="235" y="90">9000</text>
+            </g>
+            <g class="tb">
+              <rect x="228" y="318" width="160" height="88"/>
+              <line x1="228" y1="346" x2="388" y2="346"/><line x1="318" y1="346" x2="318" y2="406"/><line x1="228" y1="376" x2="318" y2="376"/>
+              <text class="code" x="238" y="337">КМ-01-Ф-004</text>
+              <text class="small" x="238" y="366">ЛИСТ 4</text><text class="small" x="238" y="396">М 1:100</text><text class="small" x="328" y="364">РЕВ.</text>
+              <text class="rev r1" x="328" y="394">01</text><text class="rev r2" x="328" y="394">02</text><text class="rev r3" x="328" y="394">03</text>
+            </g>
+            <g class="stamp">
+              <rect x="64" y="340" width="148" height="40" rx="5"/>
+              <path d="M78 360 L85 367 L98 352"/>
+              <text x="106" y="365">АКТУАЛЬНО</text>
+            </g>
+            <g class="flow">
+              <line class="track" x1="60" y1="460" x2="380" y2="460"/>
+              <line class="prog" x1="60" y1="460" x2="380" y2="460"/>
+              <circle class="d d1" cx="60" cy="460" r="7"/><circle class="d d2" cx="220" cy="460" r="7"/><circle class="d d3" cx="380" cy="460" r="7"/>
+              <text x="60" y="490" style="text-anchor:start">ЗАГРУЖЕНО</text><text x="220" y="490">СОГЛАСОВАНИЕ</text><text x="380" y="490" style="text-anchor:end">УТВЕРЖДЕНО</text>
+            </g>
+            <text class="caption" x="40" y="540">ВСЕ РЕВИЗИИ — В ОДНОМ МЕСТЕ</text>
+          </g>
+        </svg>
+      </figure>
     </div>
-    <div class="meta"><a class="region" href="https://unadesk.com/" hreflang="en" lang="en">International → unadesk.com</a> · © 2026 UnaDesk · unadesk.ru</div>
-  </footer>
-</div>
+    <div class="laser" aria-hidden="true">
+      <span class="laser-mark lbl">ОТМ. ±0.000</span>
+      <i class="laser-line"></i>
+    </div>
+  </section>
+
+  <section class="sec" id="parties" aria-labelledby="h-parties">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="lbl rv"><b>01</b> / Участники</p>
+        <h2 id="h-parties" class="rv">Все участники стройки за&nbsp;одним столом</h2>
+        <p class="rv">На&nbsp;площадке все работают от&nbsp;одной отметки ±0.000. С&nbsp;документами так же: каждый видит свою часть объекта, а&nbsp;работает с&nbsp;общей актуальной версией.</p>
+      </div>
+      <div class="parties">
+        <div class="lvl" aria-hidden="true">
+          <div class="post"><span class="bubble mono">1</span><div class="desk mono" data-p="РЕВ. 0" style="--off:30px;--from:1"><svg viewBox="10 21 28 22"><path d="M13 21 V29 C13 35.5 17.5 40 24 40 C30.5 40 35 35.5 35 29 V21"/></svg></div></div>
+          <div class="post"><span class="bubble mono">2</span><div class="desk mono" data-p="РЕВ. 0" style="--off:6px;--from:3"><svg viewBox="10 21 28 22"><path d="M13 21 V29 C13 35.5 17.5 40 24 40 C30.5 40 35 35.5 35 29 V21"/></svg></div></div>
+          <div class="post"><span class="bubble mono">3</span><div class="desk mono" data-p="РЕВ. 0" style="--off:18px;--from:2"><svg viewBox="10 21 28 22"><path d="M13 21 V29 C13 35.5 17.5 40 24 40 C30.5 40 35 35.5 35 29 V21"/></svg></div></div>
+          <div class="post"><span class="bubble mono">4</span><div class="desk mono" data-p="РЕВ. 0" style="--off:40px;--from:1"><svg viewBox="10 21 28 22"><path d="M13 21 V29 C13 35.5 17.5 40 24 40 C30.5 40 35 35.5 35 29 V21"/></svg></div></div>
+          <div class="post"><span class="bubble mono">5</span><div class="desk mono" data-p="РЕВ. 0" style="--off:12px;--from:2"><svg viewBox="10 21 28 22"><path d="M13 21 V29 C13 35.5 17.5 40 24 40 C30.5 40 35 35.5 35 29 V21"/></svg></div></div>
+          <i class="lvl-line"></i>
+          <span class="lvl-mark lbl">ОТМ. ±0.000</span>
+        </div>
+        <ol class="roles">
+          <li class="role"><span class="mono" aria-hidden="true">1</span><h3>Заказчик</h3><p>Видит актуальное состояние документации и&nbsp;согласований по&nbsp;объекту.</p></li>
+          <li class="role"><span class="mono" aria-hidden="true">2</span><h3>Генподрядчик</h3><p>Собирает рабочую и&nbsp;исполнительную документацию от&nbsp;всех подрядчиков в&nbsp;одном месте.</p></li>
+          <li class="role"><span class="mono" aria-hidden="true">3</span><h3>Субподрядчики</h3><p>Получают действующую ревизию чертежей и&nbsp;сдают акты без пересылки по&nbsp;почте.</p></li>
+          <li class="role"><span class="mono" aria-hidden="true">4</span><h3>Проектировщики</h3><p>Выпускают ревизии и&nbsp;видят замечания к&nbsp;ним прямо на&nbsp;листе.</p></li>
+          <li class="role"><span class="mono" aria-hidden="true">5</span><h3>Поставщики</h3><p>Работают по&nbsp;утверждённым спецификациям, а&nbsp;не&nbsp;по&nbsp;черновикам.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="modules" aria-labelledby="h-modules">
+    <div class="wrap">
+      <div class="head-3d">
+        <div class="sec-head">
+          <p class="lbl rv"><b>02</b> / Модули</p>
+          <h2 id="h-modules" class="rv">Начинаем с&nbsp;файлов. Дальше — весь цикл документации</h2>
+        </div>
+        <div class="o3d o3d-sheets" role="img" aria-label="Стопка листов-ревизий: верхний лист актуальный, нижние сохранены"><i class="sl sl0"></i><i class="sl sl1"></i><i class="sl sl2"></i></div>
+      </div>
+      <ul class="mods">
+        <li class="mod mod-lead rv">
+          <div class="mod-in">
+            <div class="mod-main">
+              <div class="mod-top"><span class="mod-n mono">01</span><span class="st st-on">В разработке</span></div>
+              <h3 class="mod-name">Drive</h3>
+              <p><strong>Хранение и&nbsp;выдача документации</strong></p>
+              <p>Хранение, фиксация ревизий, выдача и&nbsp;передача документов, доступ по&nbsp;объектам. Первый модуль UnaDesk.</p>
+            </div>
+            <div class="files">
+              <p class="lbl">Пример данных</p>
+              <ul class="mono">
+                <li><span class="f-name">КМ-01-Ф-004_rev3.pdf</span><span class="f-size">8,4 МБ</span><span class="st st-ok">Утверждено</span></li>
+                <li><span class="f-name">КМ-01-Ф-005_rev2.dwg</span><span class="f-size">3,1 МБ</span><span class="st st-wait">На согласовании</span></li>
+                <li><span class="f-name">АОСР-118_rev1.pdf</span><span class="f-size">1,2 МБ</span><span class="st st-no">Отклонено</span></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <li class="mod rv">
+          <div class="mod-in"><div class="mod-main">
+            <div class="mod-top"><span class="mod-n mono">02</span><span class="st">Следующий</span></div>
+            <h3 class="mod-name">Docs</h3>
+            <p><strong>Документооборот и&nbsp;ИД</strong></p>
+            <p>Маршруты согласования, реестры, сборка исполнительной документации.</p>
+          </div></div>
+        </li>
+        <li class="mod rv">
+          <div class="mod-in"><div class="mod-main">
+            <div class="mod-top"><span class="mod-n mono">03</span><span class="st">Следующий</span></div>
+            <h3 class="mod-name">Design</h3>
+            <p><strong>Система управления разработкой</strong></p>
+            <p>Вся работа над проектно-сметной документацией: ТЗ, контроль, анализ, доработка.</p>
+          </div></div>
+        </li>
+        <li class="mod rv">
+          <div class="mod-in"><div class="mod-main">
+            <div class="mod-top"><span class="mod-n mono">04</span><span class="st">Следующий</span></div>
+            <h3 class="mod-name">View</h3>
+            <p><strong>Просмотр моделей и&nbsp;чертежей</strong></p>
+            <p>BIM и&nbsp;DWG в&nbsp;браузере, замечания на&nbsp;листе и&nbsp;в&nbsp;модели.</p>
+          </div></div>
+        </li>
+      </ul>
+      <p class="note rv">Планирование и&nbsp;прогноз остаются во внешних системах: UnaDesk передаёт им статусы и&nbsp;события документов через API.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="approach" aria-labelledby="h-approach">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="lbl rv"><b>03</b> / Подход</p>
+        <h2 id="h-approach" class="rv">Как мы делаем UnaDesk</h2>
+      </div>
+      <ul class="why">
+        <li class="rv"><h3>Сделано теми, кто строил</h3><p>Инструменты повторяют реальные процессы стройки, а&nbsp;не&nbsp;схему из&nbsp;учебника.</p></li>
+        <li class="rv"><h3>На&nbsp;языке площадки</h3><p>Объекты, разделы, ревизии, АОСР и&nbsp;предписания — вместо «воркспейсов» и&nbsp;«тикетов».</p></li>
+        <li class="rv"><h3>Ваш объект — ваши данные</h3><p>Доступ к&nbsp;каждому объекту выдаёт его администратор.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec" id="contact" aria-labelledby="h-contact">
+    <div class="wrap">
+      <div class="contact-box">
+        <div class="corners" aria-hidden="true"></div>
+        <div class="o3d o3d-desk" role="img" aria-label="Объёмный знак UnaDesk: «стол» под сквозной лазерной линией"></div>
+        <p class="lbl"><b>04</b> / Контакты</p>
+        <h2 id="h-contact">Расскажите о&nbsp;своём объекте</h2>
+        <p>UnaDesk готовится к&nbsp;запуску. Напишите, что сейчас мешает работать с&nbsp;документами на&nbsp;объекте, — ответим по&nbsp;почте.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="mailto:info@unadesk.ru">Написать нам<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12 H19 M13 6 L19 12 L13 18"/></svg></a>
+          <a class="addr mono" href="mailto:info@unadesk.ru">info@unadesk.ru</a>
+          <button class="btn btn-ghost btn-sm" id="copy" type="button" hidden data-v="info@unadesk.ru" data-ok="Адрес скопирован">Скопировать адрес</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ftr">
+  <div class="wrap ftr-in mono">
+    <a href="mailto:info@unadesk.ru">info@unadesk.ru</a>
+    <div class="ftr-meta"><a href="https://unadesk.com/" hreflang="en" lang="en">International → unadesk.com</a><span>© 2026 UnaDesk</span><span>unadesk.ru</span></div>
+  </div>
+</footer>
+
+<div class="toast mono" id="copied" popover="manual" role="status"></div>
+<div class="scan" aria-hidden="true"></div>
+
+<script>
+/* No network requests, no cookies, no storage. Two conveniences only. */
+(() => {
+  const root = document.documentElement;
+
+  // 1. Theme switch works without this script (CSS :has). The script only adds the laser-pass transition.
+  const flip = document.getElementById('flip');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+  const syncBar = () => {
+    const bg = getComputedStyle(document.body).backgroundColor;
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.content = bg; });
+  };
+  if (flip) flip.addEventListener('change', () => {
+    if (!document.startViewTransition || calm.matches) { syncBar(); return; }
+    const next = flip.checked;
+    flip.checked = !next;
+    root.classList.add('vt');
+    const t = document.startViewTransition(() => { flip.checked = next; root.classList.add('vt-end'); });
+    t.finished.finally(() => { root.classList.remove('vt', 'vt-end'); syncBar(); });
+  });
+
+  // 2. Copy the address to the clipboard (stays on the visitor's device).
+  const copy = document.getElementById('copy');
+  const toast = document.getElementById('copied');
+  let timer;
+  if (copy && toast && navigator.clipboard) {
+    copy.hidden = false;
+    copy.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(copy.dataset.v); } catch (e) { return; }
+      toast.textContent = copy.dataset.ok;
+      clearTimeout(timer);
+      if (toast.showPopover) {
+        if (!toast.matches(':popover-open')) toast.showPopover();
+        timer = setTimeout(() => toast.hidePopover(), 1800);
+      } else {
+        timer = setTimeout(() => { toast.textContent = ''; }, 1800);
+      }
+    });
+  }
+})();
+</script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # unadesk.ru
 
-Заглушка UnaDesk для России: «Готовимся к запуску». Статическая страница на русском: `index.html` + `favicon.svg` + шрифты в `fonts/` (OFL).
+Заглушка UnaDesk для России: «Готовимся к запуску». Статическая страница на русском: `index.html` + `favicon.svg` + `img/` (3D-рендеры) + шрифты в `fonts/` (OFL).
 
 Публикуется через GitHub Pages из ветки `main` (папка `/`), домен — `unadesk.ru` (файл `CNAME`). Международная версия — unadesk.com (репозиторий `unadesk-site`).
 
